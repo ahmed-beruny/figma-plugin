@@ -1,0 +1,19 @@
+{
+  "name": "viva-plugin",
+  "id": "1427998141252373057",
+  "api": "1.0.0",
+  "main": "code.ts",
+  "ui": "ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma",
+    "figjam"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ]
+  }
+}

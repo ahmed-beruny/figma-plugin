@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generated Layout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 300px; }
+    button { margin-top: 10px; }
+    #jsonContainer { max-height: 400px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <h1>Selected Node JSON</h1>
+  <div id="jsonContainer">
+    <textarea id="jsonData" readonly></textarea>
+  </div>
+  <button id="copyButton">Copy JSON</button>
+  <div id="content"></div>
+  <p id="jsonSize"></p>
+  <script>
+    window.onmessage = (event) => {
+      if (!event.data.pluginMessage) return; // Add this line to handle missing pluginMessage
+      const { type, layoutContent } = event.data.pluginMessage;
+      if (type === 'render-layout') {
+        document.getElementById('content').innerHTML = layoutContent;
+      }
+      if (event.data.pluginMessage.type === 'selected-node-json') {
+        let jsonData = JSON.stringify(event.data.pluginMessage.data, null, 2);
+        const jsonLines = jsonData.split('\n');
+        // if (jsonLines.length > 100) {
+        //   jsonData = jsonLines.slice(0, 100).join('\n') + '\n... (truncated)';
+        // }
+        document.getElementById('jsonData').value = jsonData;
+        const jsonSizeBytes = new Blob([jsonData]).size;
+        const jsonSizeKB = (jsonSizeBytes / 1024).toFixed(2);
+        document.getElementById('jsonSize').innerText = `Size: ${jsonSizeKB} KB`;
+      }
+    };
+
+    document.getElementById('copyButton').onclick = () => {
+      const jsonData = document.getElementById('jsonData');
+      jsonData.select();
+      document.execCommand('copy');
+      parent.postMessage({ pluginMessage: { type: 'copy-json' } }, '*');
+    };
+  </script>
+</body>
+</html>
